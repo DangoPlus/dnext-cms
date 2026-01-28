@@ -1,0 +1,88 @@
+import { getPayload } from 'payload'
+import { notFound } from 'next/navigation'
+import React from 'react'
+import config from '@/payload.config'
+import { PostCard } from '@/components/blog/PostCard'
+
+export async function generateStaticParams() {
+  const payloadConfig = await config
+  const payload = await getPayload({ config: payloadConfig })
+
+  const tags = await payload.find({
+    collection: 'tags',
+    limit: 1000,
+  })
+
+  return tags.docs.map((tag: any) => ({
+    slug: tag.slug,
+  }))
+}
+
+export default async function TagPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const payloadConfig = await config
+  const payload = await getPayload({ config: payloadConfig })
+
+  // 获取标签信息
+  const tagResult = await payload.find({
+    collection: 'tags',
+    where: {
+      slug: {
+        equals: slug,
+      },
+    },
+    limit: 1,
+  })
+
+  const tag = tagResult.docs[0] as any
+
+  if (!tag) {
+    notFound()
+  }
+
+  // 获取该标签下的文章
+  const posts = await payload.find({
+    collection: 'posts',
+    where: {
+      and: [
+        {
+          status: {
+            equals: 'published',
+          },
+        },
+        {
+          tags: {
+            contains: tag.id,
+          },
+        },
+      ],
+    },
+    sort: '-publishedDate',
+    limit: 50,
+    depth: 2,
+  })
+
+  return (
+    <div className="container">
+      <div className="page-header">
+        <h1 className="tag-title">
+          <span className="hash">#</span>
+          {tag.name}
+        </h1>
+        <span className="count">{posts.totalDocs} 篇文章</span>
+      </div>
+
+      {posts.docs.length > 0 ? (
+        <div className="posts-grid">
+          {posts.docs.map((post: any) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      ) : (
+        <div className="empty-state">
+          <p>该标签下暂无文章</p>
+        </div>
+      )}
+    </div>
+  )
+}

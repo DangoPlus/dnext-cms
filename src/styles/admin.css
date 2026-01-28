@@ -1,0 +1,143 @@
+/* 自定义 Admin 面板样式 */
+
+:root {
+  /* 主题色 - 紫色渐变 */
+  --theme-elevation-50: #f8f7ff;
+  --theme-elevation-100: #f0edff;
+  --theme-elevation-200: #e8e3ff;
+  --theme-elevation-300: #d9d2ff;
+  --theme-elevation-400: #c4b8ff;
+  --theme-elevation-500: #a594f9;
+  --theme-elevation-600: #8b7ceb;
+  --theme-elevation-700: #7161d9;
+  --theme-elevation-800: #5a4bb5;
+  --theme-elevation-900: #4a3d99;
+
+  /* 主色调 */
+  --theme-success-500: #10b981;
+  --theme-warning-500: #f59e0b;
+  --theme-error-500: #ef4444;
+
+  /* 圆角 */
+  --base-border-radius: 8px;
+  --theme-border-radius-sm: 6px;
+  --theme-border-radius-md: 8px;
+  --theme-border-radius-lg: 12px;
+
+  /* 字体 */
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+}
+
+/* 全局样式优化 */
+body {
+  font-family: var(--font-body);
+}
+
+/* 侧边栏美化 */
+.nav {
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.nav__link {
+  transition: all 0.2s ease;
+}
+
+.nav__link:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  transform: translateX(4px);
+}
+
+.nav__link--active {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-left: 3px solid white;
+}
+
+/* 卡片样式 */
+.card {
+  border-radius: var(--theme-border-radius-lg) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-2px);
+}
+
+/* 按钮美化 */
+.btn--style-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border: none !important;
+  border-radius: var(--theme-border-radius-md) !important;
+  transition: all 0.3s ease;
+}
+
+.btn--style-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* 输入框美化 */
+.input,
+.textarea,
+.select {
+  border-radius: var(--theme-border-radius-sm) !important;
+  border: 2px solid #e5e7eb !important;
+  transition: all 0.2s ease;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+/* 表格美化 */
+.table {
+  border-radius: var(--theme-border-radius-md) !important;
+  overflow: hidden;
+}
+
+.table__row:hover {
+  background: rgba(102, 126, 234, 0.05) !important;
+}
+
+/* Dashboard 美化 */
+.dashboard {
+  padding: 24px;
+}
+
+.dashboard__title {
+  font-size: 32px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 面包屑美化 */
+.breadcrumbs {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.breadcrumbs a:hover {
+  color: #667eea;
+}
+
+/* 加载动画 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

@@ -1,18 +1,22 @@
 import React from 'react'
+import { Header } from '@/components/blog/Header'
+import { Footer } from '@/components/blog/Footer'
 import './styles.css'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+  description: '一个基于 Payload CMS 和 Next.js 构建的现代化博客',
+  title: 'DNext Blog - 现代化博客系统',
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
 
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <body>
-        <main>{children}</main>
+        <Header />
+        <main className="main">{children}</main>
+        <Footer />
       </body>
     </html>
   )
