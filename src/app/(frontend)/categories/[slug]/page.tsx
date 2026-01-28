@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import config from '@/payload.config'
 import { PostCard } from '@/components/blog/PostCard'
+import type { Category, Post } from '@/payload-types'
 
 export async function generateStaticParams() {
   const payloadConfig = await config
@@ -13,8 +14,8 @@ export async function generateStaticParams() {
     limit: 1000,
   })
 
-  return categories.docs.map((category: any) => ({
-    slug: category.slug,
+  return categories.docs.map((category) => ({
+    slug: (category as Category).slug,
   }))
 }
 
@@ -34,7 +35,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     limit: 1,
   })
 
-  const category = categoryResult.docs[0] as any
+  const category = categoryResult.docs[0] as Category
 
   if (!category) {
     notFound()
@@ -72,8 +73,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
       {posts.docs.length > 0 ? (
         <div className="posts-grid">
-          {posts.docs.map((post: any) => (
-            <PostCard key={post.id} post={post} />
+          {posts.docs.map((post) => (
+            <PostCard key={post.id} post={post as Post} />
           ))}
         </div>
       ) : (

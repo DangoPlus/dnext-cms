@@ -1,7 +1,9 @@
 import { getPayload } from 'payload'
+import Link from 'next/link'
 import React from 'react'
 import config from '@/payload.config'
 import { PostCard } from '@/components/blog/PostCard'
+import type { Post } from '@/payload-types'
 
 export default async function HomePage() {
   const payloadConfig = await config
@@ -49,8 +51,8 @@ export default async function HomePage() {
         <section className="featured-section">
           <h2 className="section-title">推荐文章</h2>
           <div className="featured-posts">
-            {featuredPosts.docs.map((post: any) => (
-              <PostCard key={post.id} post={post} />
+            {featuredPosts.docs.map((post) => (
+              <PostCard key={post.id} post={post as Post} />
             ))}
           </div>
         </section>
@@ -61,16 +63,16 @@ export default async function HomePage() {
         <h2 className="section-title">最新文章</h2>
         {posts.docs.length > 0 ? (
           <div className="posts-grid">
-            {posts.docs.map((post: any) => (
-              <PostCard key={post.id} post={post} />
+            {posts.docs.map((post) => (
+              <PostCard key={post.id} post={post as Post} />
             ))}
           </div>
         ) : (
           <div className="empty-state">
             <p>暂无文章，请在后台创建第一篇文章。</p>
-            <a href="/admin" className="button">
+            <Link href="/admin" className="button">
               前往管理后台
-            </a>
+            </Link>
           </div>
         )}
       </section>

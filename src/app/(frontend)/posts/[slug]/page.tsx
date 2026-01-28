@@ -5,6 +5,7 @@ import Link from 'next/link'
 import React from 'react'
 import config from '@/payload.config'
 import { RichTextRenderer } from '@/components/blog/RichTextRenderer'
+import type { Post, Category, Tag, User, Media } from '@/payload-types'
 
 export async function generateStaticParams() {
   const payloadConfig = await config
@@ -15,8 +16,8 @@ export async function generateStaticParams() {
     limit: 1000,
   })
 
-  return posts.docs.map((post: any) => ({
-    slug: post.slug,
+  return posts.docs.map((post) => ({
+    slug: (post as Post).slug,
   }))
 }
 
@@ -66,7 +67,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     depth: 2,
   })
 
-  const post = result.docs[0] as any
+  const post = result.docs[0] as Post
 
   if (!post) {
     notFound()
@@ -91,7 +92,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             {post.publishedDate && (
               <time className="date">{formatDate(post.publishedDate)}</time>
             )}
-            {post.author && <span className="author">· 作者：{post.author.name}</span>}
+            {post.author && typeof post.author === 'object' && <span className="author">· 作者：{(post.author as User).name}</span>}
             {post.viewCount !== undefined && (
               <span className="views">· 阅读：{post.viewCount}</span>
             )}
@@ -99,37 +100,43 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
           {/* 分类和标签 */}
           <div className="post-taxonomy">
-            {post.categories && post.categories.length > 0 && (
+            {post.categories && Array.isArray(post.categories) && post.categories.length > 0 && (
               <div className="categories">
-                {post.categories.map((category: any) => (
-                  <Link
-                    key={category.id}
-                    href={`/categories/${category.slug}`}
-                    className="category-tag"
-                  >
-                    {category.name}
-                  </Link>
-                ))}
+                {post.categories.map((category) => {
+                  const cat = category as Category
+                  return (
+                    <Link
+                      key={cat.id}
+                      href={`/categories/${cat.slug}`}
+                      className="category-tag"
+                    >
+                      {cat.name}
+                    </Link>
+                  )
+                })}
               </div>
             )}
-            {post.tags && post.tags.length > 0 && (
+            {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
               <div className="tags">
-                {post.tags.map((tag: any) => (
-                  <Link key={tag.id} href={`/tags/${tag.slug}`} className="tag">
-                    #{tag.name}
-                  </Link>
-                ))}
+                {post.tags.map((tag) => {
+                  const t = tag as Tag
+                  return (
+                    <Link key={t.id} href={`/tags/${t.slug}`} className="tag">
+                      #{t.name}
+                    </Link>
+                  )
+                })}
               </div>
             )}
           </div>
         </header>
 
         {/* 特色图片 */}
-        {post.featuredImage && (
+        {post.featuredImage && typeof post.featuredImage === 'object' && (
           <div className="post-featured-image">
             <Image
-              src={post.featuredImage.url}
-              alt={post.featuredImage.alt || post.title}
+              src={(post.featuredImage as Media).url || ''}
+              alt={(post.featuredImage as Media).alt || post.title}
               width={1200}
               height={600}
               className="image"
@@ -148,18 +155,18 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         {/* 文章底部 */}
         <footer className="post-footer">
           <div className="author-info">
-            {post.author?.avatar && (
+            {post.author && typeof post.author === 'object' && (post.author as User).avatar && typeof (post.author as User).avatar === 'object' && (
               <Image
-                src={post.author.avatar.url}
-                alt={post.author.name}
+                src={((post.author as User).avatar as Media).url || ''}
+                alt={(post.author as User).name || ''}
                 width={60}
                 height={60}
                 className="avatar"
               />
             )}
             <div className="author-details">
-              <h3>{post.author?.name}</h3>
-              {post.author?.bio && <p>{post.author.bio}</p>}
+              {post.author && typeof post.author === 'object' && <h3>{(post.author as User).name}</h3>}
+              {post.author && typeof post.author === 'object' && (post.author as User).bio && <p>{(post.author as User).bio}</p>}
             </div>
           </div>
         </footer>

@@ -2,6 +2,9 @@ import { getPayload } from 'payload'
 import Link from 'next/link'
 import React from 'react'
 import config from '@/payload.config'
+import type { Tag } from '@/payload-types'
+
+type TagWithCount = Tag & { postCount: number }
 
 export default async function TagsPage() {
   const payloadConfig = await config
@@ -14,8 +17,8 @@ export default async function TagsPage() {
   })
 
   // 统计每个标签的文章数量
-  const tagsWithCount = await Promise.all(
-    tags.docs.map(async (tag: any) => {
+  const tagsWithCount: TagWithCount[] = await Promise.all(
+    tags.docs.map(async (tag) => {
       const posts = await payload.find({
         collection: 'posts',
         where: {
@@ -27,7 +30,7 @@ export default async function TagsPage() {
             },
             {
               tags: {
-                contains: tag.id,
+                contains: (tag as Tag).id,
               },
             },
           ],
@@ -36,7 +39,7 @@ export default async function TagsPage() {
       })
 
       return {
-        ...tag,
+        ...(tag as Tag),
         postCount: posts.totalDocs,
       }
     }),
@@ -50,7 +53,7 @@ export default async function TagsPage() {
       </div>
 
       <div className="tags-cloud">
-        {tagsWithCount.map((tag: any) => (
+        {tagsWithCount.map((tag) => (
           <Link
             key={tag.id}
             href={`/tags/${tag.slug}`}

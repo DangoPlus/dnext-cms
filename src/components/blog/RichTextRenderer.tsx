@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @next/next/no-img-element */
 import React from 'react'
 import type { SerializedEditorState, SerializedLexicalNode } from 'lexical'
 
@@ -22,7 +24,7 @@ const renderNode = (node: SerializedLexicalNode, index: number): React.ReactNode
   // 标题节点
   if (nodeType === 'heading') {
     const { tag, children } = node as any
-    const HeadingTag = tag as keyof JSX.IntrinsicElements
+    const HeadingTag = tag as React.ElementType
     return (
       <HeadingTag key={index}>
         {children.map((child: any, i: number) => renderNode(child, i))}

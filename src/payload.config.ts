@@ -23,8 +23,6 @@ export default buildConfig({
     },
     meta: {
       titleSuffix: '- DNext CMS',
-      favicon: '/favicon.ico',
-      ogImage: '/og-image.png',
     },
     components: {
       graphics: {
@@ -32,7 +30,6 @@ export default buildConfig({
         Icon: '/components/Icon#Icon',
       },
     },
-    css: path.resolve(dirname, 'styles/admin.css'),
   },
   collections: [Users, Media, Posts, Categories, Tags],
   editor: lexicalEditor(),

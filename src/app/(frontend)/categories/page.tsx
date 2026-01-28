@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import Link from 'next/link'
 import React from 'react'
 import config from '@/payload.config'
+import type { Category } from '@/payload-types'
 
 export default async function CategoriesPage() {
   const payloadConfig = await config
@@ -15,7 +16,7 @@ export default async function CategoriesPage() {
 
   // 统计每个分类的文章数量
   const categoriesWithCount = await Promise.all(
-    categories.docs.map(async (category: any) => {
+    categories.docs.map(async (category) => {
       const posts = await payload.find({
         collection: 'posts',
         where: {
@@ -50,15 +51,15 @@ export default async function CategoriesPage() {
       </div>
 
       <div className="categories-grid">
-        {categoriesWithCount.map((category: any) => (
+        {categoriesWithCount.map((category) => (
           <Link
-            key={category.id}
-            href={`/categories/${category.slug}`}
+            key={(category as Category).id}
+            href={`/categories/${(category as Category).slug}`}
             className="category-card"
           >
-            <h2>{category.name}</h2>
-            {category.description && <p className="description">{category.description}</p>}
-            <span className="count">{category.postCount} 篇文章</span>
+            <h2>{(category as Category).name}</h2>
+            {(category as Category).description && <p className="description">{(category as Category).description}</p>}
+            <span className="count">{(category as unknown as { postCount: number }).postCount} 篇文章</span>
           </Link>
         ))}
       </div>
