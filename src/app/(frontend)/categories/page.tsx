@@ -5,6 +5,8 @@ import config from '@/payload.config'
 import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Category } from '@/payload-types'
 
+export const revalidate = 0
+
 export default async function CategoriesPage() {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })

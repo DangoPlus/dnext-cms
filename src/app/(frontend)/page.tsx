@@ -6,6 +6,8 @@ import { PostCard } from '@/components/blog/PostCard'
 import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Post } from '@/payload-types'
 
+export const revalidate = 0
+
 export default async function HomePage() {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })

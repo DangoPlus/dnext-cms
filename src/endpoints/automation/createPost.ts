@@ -170,6 +170,7 @@ export const createAutomationPostEndpoint: Endpoint = {
     })
 
     const postData = {
+      _status: status === 'published' ? ('published' as const) : ('draft' as const),
       author: user.id,
       contentFormat,
       excerpt,

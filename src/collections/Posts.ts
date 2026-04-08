@@ -35,6 +35,14 @@ export const Posts: CollectionConfig = {
           return data
         }
 
+        if (data.status === 'published') {
+          data._status = 'published'
+        }
+
+        if (data.status === 'draft') {
+          data._status = 'draft'
+        }
+
         if (!data.author && req.user?.id) {
           data.author = req.user.id
         }

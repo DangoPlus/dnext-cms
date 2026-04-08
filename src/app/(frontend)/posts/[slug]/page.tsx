@@ -9,6 +9,8 @@ import { RichTextRenderer } from '@/components/blog/RichTextRenderer'
 import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Post, Category, Tag, User, Media } from '@/payload-types'
 
+export const revalidate = 0
+
 export async function generateStaticParams() {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
@@ -26,6 +28,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+  const decodedSlug = decodeURIComponent(slug)
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
@@ -33,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     collection: 'posts',
     where: publicPostWhere({
       slug: {
-        equals: slug,
+        equals: decodedSlug,
       },
     }),
     limit: 1,
@@ -56,6 +59,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+  const decodedSlug = decodeURIComponent(slug)
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
@@ -63,7 +67,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     collection: 'posts',
     where: publicPostWhere({
       slug: {
-        equals: slug,
+        equals: decodedSlug,
       },
     }),
     limit: 1,

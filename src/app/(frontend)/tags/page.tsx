@@ -5,6 +5,8 @@ import config from '@/payload.config'
 import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Tag } from '@/payload-types'
 
+export const revalidate = 0
+
 type TagWithCount = Tag & { postCount: number }
 
 export default async function TagsPage() {

@@ -6,6 +6,8 @@ import { PostCard } from '@/components/blog/PostCard'
 import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Tag, Post } from '@/payload-types'
 
+export const revalidate = 0
+
 export async function generateStaticParams() {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
@@ -22,6 +24,7 @@ export async function generateStaticParams() {
 
 export default async function TagPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+  const decodedSlug = decodeURIComponent(slug)
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
@@ -30,7 +33,7 @@ export default async function TagPage({ params }: { params: Promise<{ slug: stri
     collection: 'tags',
     where: {
       slug: {
-        equals: slug,
+        equals: decodedSlug,
       },
     },
     limit: 1,
