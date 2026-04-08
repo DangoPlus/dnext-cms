@@ -3,6 +3,7 @@ import config from '../payload.config'
 
 const resetAdmin = async () => {
   const payload = await getPayload({ config })
+  const adminUrl = 'http://localhost:3000/admin'
 
   try {
     // 删除所有用户
@@ -22,7 +23,7 @@ const resetAdmin = async () => {
     }
 
     console.log('\n所有用户已删除！')
-    console.log('现在访问 http://localhost:3001/admin 创建新的管理员账号')
+    console.log(`现在访问 ${adminUrl} 创建新的管理员账号`)
 
     process.exit(0)
   } catch (error) {

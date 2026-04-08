@@ -43,7 +43,8 @@ export default buildConfig({
   sharp,
   plugins: [
     vercelBlobStorage({
-      enabled: true, // Optional, defaults to true
+      // Allow local development to run without cloud storage credentials.
+      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
       // Specify which collections should use Vercel Blob
       collections: {
         [Media.slug]: true,

@@ -1,67 +1,115 @@
-# Payload Blank Template
+# DNext CMS
 
-This template comes configured with the bare minimum to get started on anything you need.
+一个基于 Next.js 15、Payload CMS 3 和 MongoDB 构建的内容管理系统，当前聚焦于博客场景，包含后台管理、文章发布、分类/标签聚合页和文章详情页。
 
-## Quick start
+## 技术栈
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+- Next.js 15 App Router
+- Payload CMS 3
+- MongoDB
+- React 19
+- Lexical Rich Text
+- Optional Vercel Blob media storage
+- Vitest + Playwright
 
-## Quick Start - local setup
+## 当前能力
 
-To spin up this template locally, follow these steps:
+- Payload 后台登录与用户管理
+- 文章、分类、标签、媒体五个内容模型
+- 首页推荐文章与最新文章列表
+- 分类页、标签页、文章详情页
+- 自定义后台 Logo / Icon
 
-### Clone
+## 本地开发
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+建议使用 Node.js `20.19+`。当前 `20.18.1` 可以安装依赖，但会收到 `vite` 的 engine warning。
 
-### Development
+1. 安装依赖
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+```bash
+npm install
+```
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+2. 配置环境变量
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+```bash
+cp .env.example .env
+```
 
-#### Docker (Optional)
+必填变量：
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+- `DATABASE_MONGODB_URI`
+- `PAYLOAD_SECRET`
 
-To do so, follow these steps:
+可选变量：
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+- `BLOB_READ_WRITE_TOKEN`
+  说明：不配置时，项目会跳过 Vercel Blob 适配器，方便本地开发。
 
-## How it works
+3. 启动开发环境
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+```bash
+npm run dev
+```
 
-### Collections
+默认地址：
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+- 前台: `http://localhost:3000`
+- 后台: `http://localhost:3000/admin`
 
-- #### Users (Authentication)
+## 常用命令
 
-  Users are auth-enabled collections that have access to the admin panel.
+```bash
+npm run dev
+npm run build
+npm run typecheck
+npm run lint
+npm run check
+npm run generate:types
+npm run generate:importmap
+npm run reset:admin
+npm run test:int
+npm run test:e2e
+```
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+## 项目结构
 
-- #### Media
+```text
+src/
+├── app/
+│   ├── (frontend)/        # 博客前台页面
+│   └── (payload)/         # Payload 后台
+├── collections/           # Users / Media / Posts / Categories / Tags
+├── components/            # 后台品牌组件与博客 UI 组件
+├── scripts/               # 开发辅助脚本
+├── styles/                # 全局样式
+├── payload.config.ts      # Payload 主配置
+└── payload-types.ts       # 生成的 Payload 类型
+tests/
+├── int/                   # 集成测试
+└── e2e/                   # Playwright 端到端测试
+```
 
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+## 内容模型
 
-### Docker
+- `users`: 后台用户，包含 `name`、`role`、`avatar`、`bio`
+- `media`: 上传资源，当前包含 `alt`
+- `posts`: 文章，包含 `status`、`featured`、`seo`、富文本 `content`
+- `categories`: 分类
+- `tags`: 标签
 
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+## 开发约定
 
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+- 修改 Payload schema 后执行 `npm run generate:types`
+- 修改 Payload 后台组件路径后执行 `npm run generate:importmap`
+- 传入 `user` 调用 Local API 时，务必同时设置 `overrideAccess: false`
+- 在 hooks 中发起嵌套写操作时，务必透传 `req`
 
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+## 测试说明
 
-## Questions
+- `npm run test:int` 依赖可用的 MongoDB 与正确的环境变量
+- `npm run test:e2e` 依赖本地开发服务运行在 `http://localhost:3000`
 
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+## 已知注意点
+
+- `Users` 集合中的 `role` 默认值当前是 `admin`，与注释中的“仅首个用户为管理员”并不一致，后续如果要调整权限模型请先确认业务预期。

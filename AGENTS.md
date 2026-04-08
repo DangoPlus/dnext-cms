@@ -1,3 +1,59 @@
+# DNext CMS Project Notes
+
+These repo-specific notes should be treated as higher priority than generic template assumptions:
+
+## Repo Snapshot
+
+- App type: blog-oriented CMS with a public frontend and Payload admin
+- Runtime stack: Next.js 15.4, Payload 3.73, React 19, MongoDB, Lexical
+- Optional infra: Vercel Blob is only expected when `BLOB_READ_WRITE_TOKEN` is present
+- Package manager baseline: prefer `npm` in this repo because `package-lock.json` is committed and local environments may not have `pnpm`
+
+## Repo Commands
+
+- Install dependencies: `npm install`
+- Start dev server: `npm run dev`
+- Validate baseline: `npm run check`
+- Type-check only: `npm run typecheck`
+- Regenerate schema types: `npm run generate:types`
+- Regenerate Payload admin import map after admin component path changes: `npm run generate:importmap`
+- Reset admin users during local setup: `npm run reset:admin`
+
+## Important Paths
+
+- Payload config: `src/payload.config.ts`
+- Collections: `src/collections/*.ts`
+- Public frontend: `src/app/(frontend)`
+- Admin branding components: `src/components/Logo.tsx`, `src/components/Icon.tsx`
+- Blog UI components: `src/components/blog/*`
+- Generated types: `src/payload-types.ts`
+- Tests: `tests/int`, `tests/e2e`
+
+## Current Domain Model
+
+- `users`
+- `media`
+- `posts`
+- `categories`
+- `tags`
+
+## Current Frontend Routes
+
+- `/`
+- `/posts/[slug]`
+- `/categories`
+- `/categories/[slug]`
+- `/tags`
+- `/tags/[slug]`
+
+## Repo-Specific Gotchas
+
+- Keep frontend content queries filtered to published content unless the feature explicitly needs drafts or privileged content.
+- `Users.role` currently defaults to `'admin'` for created users. Do not assume the in-file comment about "first user only" is already enforced.
+- The repo previously contained Payload blank-template leftovers in docs and tests. When changing UX, keep tests aligned with the actual blog UI instead of the template copy.
+- After changing collections or fields, run `npm run generate:types`.
+- After changing admin component paths, run `npm run generate:importmap`.
+
 # Payload CMS Development Rules
 
 You are an expert Payload CMS developer. When working with Payload projects, follow these rules:
