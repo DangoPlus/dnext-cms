@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import config from '@/payload.config'
 import { PostCard } from '@/components/blog/PostCard'
+import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Category, Post } from '@/payload-types'
 
 export async function generateStaticParams() {
@@ -44,20 +45,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   // 获取该分类下的文章
   const posts = await payload.find({
     collection: 'posts',
-    where: {
-      and: [
-        {
-          status: {
-            equals: 'published',
-          },
-        },
-        {
-          categories: {
-            contains: category.id,
-          },
-        },
-      ],
-    },
+    where: publicPostWhere({
+      categories: {
+        contains: category.id,
+      },
+    }),
     sort: '-publishedDate',
     limit: 50,
     depth: 2,

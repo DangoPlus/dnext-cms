@@ -4,7 +4,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import config from '@/payload.config'
+import { PlainTextRenderer } from '@/components/blog/PlainTextRenderer'
 import { RichTextRenderer } from '@/components/blog/RichTextRenderer'
+import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Post, Category, Tag, User, Media } from '@/payload-types'
 
 export async function generateStaticParams() {
@@ -13,6 +15,7 @@ export async function generateStaticParams() {
 
   const posts = await payload.find({
     collection: 'posts',
+    where: publicPostWhere(),
     limit: 1000,
   })
 
@@ -28,11 +31,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const result = await payload.find({
     collection: 'posts',
-    where: {
+    where: publicPostWhere({
       slug: {
         equals: slug,
       },
-    },
+    }),
     limit: 1,
   })
 
@@ -58,11 +61,11 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
   const result = await payload.find({
     collection: 'posts',
-    where: {
+    where: publicPostWhere({
       slug: {
         equals: slug,
       },
-    },
+    }),
     limit: 1,
     depth: 2,
   })
@@ -148,8 +151,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         {/* 文章内容 */}
         <div className="post-content">
           {post.excerpt && <p className="post-excerpt">{post.excerpt}</p>}
-          {/* 富文本内容渲染 */}
           {post.content && <RichTextRenderer content={post.content} />}
+          {!post.content && post.rawContent && <PlainTextRenderer content={post.rawContent} />}
         </div>
 
         {/* 文章底部 */}

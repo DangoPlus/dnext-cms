@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import Link from 'next/link'
 import React from 'react'
 import config from '@/payload.config'
+import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Tag } from '@/payload-types'
 
 type TagWithCount = Tag & { postCount: number }
@@ -21,20 +22,11 @@ export default async function TagsPage() {
     tags.docs.map(async (tag) => {
       const posts = await payload.find({
         collection: 'posts',
-        where: {
-          and: [
-            {
-              status: {
-                equals: 'published',
-              },
-            },
-            {
-              tags: {
-                contains: (tag as Tag).id,
-              },
-            },
-          ],
-        },
+        where: publicPostWhere({
+          tags: {
+            contains: (tag as Tag).id,
+          },
+        }),
         limit: 0,
       })
 

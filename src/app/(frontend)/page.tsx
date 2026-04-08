@@ -3,6 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import config from '@/payload.config'
 import { PostCard } from '@/components/blog/PostCard'
+import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Post } from '@/payload-types'
 
 export default async function HomePage() {
@@ -12,11 +13,7 @@ export default async function HomePage() {
   // 获取已发布的文章
   const posts = await payload.find({
     collection: 'posts',
-    where: {
-      status: {
-        equals: 'published',
-      },
-    },
+    where: publicPostWhere(),
     sort: '-publishedDate',
     limit: 12,
     depth: 2, // 深度查询关联数据
@@ -25,20 +22,11 @@ export default async function HomePage() {
   // 获取推荐文章
   const featuredPosts = await payload.find({
     collection: 'posts',
-    where: {
-      and: [
-        {
-          status: {
-            equals: 'published',
-          },
-        },
-        {
-          featured: {
-            equals: true,
-          },
-        },
-      ],
-    },
+    where: publicPostWhere({
+      featured: {
+        equals: true,
+      },
+    }),
     sort: '-publishedDate',
     limit: 3,
     depth: 2,

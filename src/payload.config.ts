@@ -11,9 +11,12 @@ import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
 import { Categories } from './collections/Categories'
 import { Tags } from './collections/Tags'
+import { createAutomationPostEndpoint } from './endpoints/automation/createPost'
+import { getAllowedOrigins } from './lib/config/allowedOrigins'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const allowedOrigins = getAllowedOrigins()
 
 export default buildConfig({
   admin: {
@@ -31,8 +34,15 @@ export default buildConfig({
       },
     },
   },
+  ...(allowedOrigins.length > 0
+    ? {
+        cors: allowedOrigins,
+        csrf: allowedOrigins,
+      }
+    : {}),
   collections: [Users, Media, Posts, Categories, Tags],
   editor: lexicalEditor(),
+  endpoints: [createAutomationPostEndpoint],
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

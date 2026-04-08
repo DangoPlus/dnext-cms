@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import Link from 'next/link'
 import React from 'react'
 import config from '@/payload.config'
+import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Category } from '@/payload-types'
 
 export default async function CategoriesPage() {
@@ -19,20 +20,11 @@ export default async function CategoriesPage() {
     categories.docs.map(async (category) => {
       const posts = await payload.find({
         collection: 'posts',
-        where: {
-          and: [
-            {
-              status: {
-                equals: 'published',
-              },
-            },
-            {
-              categories: {
-                contains: category.id,
-              },
-            },
-          ],
-        },
+        where: publicPostWhere({
+          categories: {
+            contains: category.id,
+          },
+        }),
         limit: 0,
       })
 

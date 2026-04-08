@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import config from '@/payload.config'
 import { PostCard } from '@/components/blog/PostCard'
+import { publicPostWhere } from '@/lib/posts/publicPostWhere'
 import type { Tag, Post } from '@/payload-types'
 
 export async function generateStaticParams() {
@@ -44,20 +45,11 @@ export default async function TagPage({ params }: { params: Promise<{ slug: stri
   // 获取该标签下的文章
   const posts = await payload.find({
     collection: 'posts',
-    where: {
-      and: [
-        {
-          status: {
-            equals: 'published',
-          },
-        },
-        {
-          tags: {
-            contains: tag.id,
-          },
-        },
-      ],
-    },
+    where: publicPostWhere({
+      tags: {
+        contains: tag.id,
+      },
+    }),
     sort: '-publishedDate',
     limit: 50,
     depth: 2,

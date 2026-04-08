@@ -1,4 +1,11 @@
 import type { CollectionConfig } from 'payload'
+import {
+  createPostAccess,
+  deletePostAccess,
+  readPostsAccess,
+  updatePostAccess,
+} from '../access/posts'
+import { generateUniquePostSlug } from '../lib/posts/slugify'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -16,7 +23,36 @@ export const Posts: CollectionConfig = {
     maxPerDoc: 50,
   },
   access: {
-    read: () => true,
+    create: createPostAccess,
+    read: readPostsAccess,
+    update: updatePostAccess,
+    delete: deletePostAccess,
+  },
+  hooks: {
+    beforeValidate: [
+      async ({ data, operation, req }) => {
+        if (operation !== 'create' || !data) {
+          return data
+        }
+
+        if (!data.author && req.user?.id) {
+          data.author = req.user.id
+        }
+
+        if (!data.slug && typeof data.title === 'string' && data.title.trim()) {
+          data.slug = await generateUniquePostSlug({
+            req,
+            title: data.title,
+          })
+        }
+
+        if (data.status === 'published' && !data.publishedDate) {
+          data.publishedDate = new Date().toISOString()
+        }
+
+        return data
+      },
+    ],
   },
   fields: [
     {
@@ -95,10 +131,55 @@ export const Posts: CollectionConfig = {
       },
     },
     {
+      name: 'rawContent',
+      type: 'textarea',
+      label: 'AI 原始正文',
+      admin: {
+        description: '保留 AI 或 n8n 传入的原始纯文本 / Markdown 内容。',
+      },
+    },
+    {
+      name: 'contentFormat',
+      type: 'select',
+      label: '内容格式',
+      defaultValue: 'plain',
+      options: [
+        {
+          label: '纯文本',
+          value: 'plain',
+        },
+        {
+          label: 'Markdown',
+          value: 'markdown',
+        },
+      ],
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'source',
+      type: 'select',
+      label: '内容来源',
+      defaultValue: 'manual',
+      options: [
+        {
+          label: '后台手动录入',
+          value: 'manual',
+        },
+        {
+          label: 'n8n 自动化',
+          value: 'n8n',
+        },
+      ],
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'content',
       type: 'richText',
       label: '内容',
-      required: true,
     },
     {
       name: 'categories',

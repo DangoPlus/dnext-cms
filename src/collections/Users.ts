@@ -11,6 +11,7 @@ export const Users: CollectionConfig = {
     verify: false, // 邮箱验证（可选）
     maxLoginAttempts: 5,
     lockTime: 600000, // 10 minutes
+    useAPIKey: true,
   },
   access: {
     // 只有管理员可以创建用户
@@ -57,8 +58,7 @@ export const Users: CollectionConfig = {
       type: 'select',
       required: true,
       label: '角色',
-      // 第一个用户默认为管理员，之后为编辑
-      defaultValue: 'admin',
+      defaultValue: 'author',
       options: [
         {
           label: '管理员',

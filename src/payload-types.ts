@@ -134,6 +134,9 @@ export interface User {
   bio?: string | null;
   updatedAt: string;
   createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -191,7 +194,13 @@ export interface Post {
    * 文章的简短描述，用于列表和 SEO
    */
   excerpt?: string | null;
-  content: {
+  /**
+   * 保留 AI 或 n8n 传入的原始纯文本 / Markdown 内容。
+   */
+  rawContent?: string | null;
+  contentFormat?: ('plain' | 'markdown') | null;
+  source?: ('manual' | 'n8n') | null;
+  content?: {
     root: {
       type: string;
       children: {
@@ -205,7 +214,7 @@ export interface Post {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   categories?: (string | Category)[] | null;
   tags?: (string | Tag)[] | null;
   seo?: {
@@ -346,6 +355,9 @@ export interface UsersSelect<T extends boolean = true> {
   bio?: T;
   updatedAt?: T;
   createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
   email?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
@@ -391,6 +403,9 @@ export interface PostsSelect<T extends boolean = true> {
   publishedDate?: T;
   featuredImage?: T;
   excerpt?: T;
+  rawContent?: T;
+  contentFormat?: T;
+  source?: T;
   content?: T;
   categories?: T;
   tags?: T;
